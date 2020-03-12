@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 ## SOURCES
 # https://archimede.dm.uniba.it/~testset/CWI_reports/testset2006r23.pdf
 #  - Most ODE problems implemented
+# https://tutorials.juliadiffeq.org/html/models/01-classical_physics.html
 # https://www.unige.ch/~hairer/testset/testset.html
 
 class test_problem(ABC):
@@ -393,6 +394,47 @@ class rober(test_problem):
         self.yp[0] = -.04*y[0] + 1e4*y[1]*y[2]
         self.yp[2] = 3e7*y[1]**2
         self.yp[1] = -self.yp[0]-self.yp[2]
+
+        return self.yp
+
+class pendulum(test_problem):
+    def __init__(self):
+        self.y0 = np.array([.0, np.pi/2])
+        self.yT = None # TODO
+        self.yp = np.zeros_like(self.y0)
+
+        self.times = [0, 6.3]
+
+        self.L = 1
+        self.g = 9.81
+
+    def dxdt(self, y, t):
+        theta = y[0]
+        dtheta = y[1]
+
+        self.yp[0] = dtheta
+        self.yp[1] = -self.g / self.L * np.sin(theta)
+
+        return self.yp
+
+class henon_heiles(test_problem):
+    def __init__(self):
+        self.y0 = np.array([.0, .1, .5, .0])
+        self.yT = None # TODO
+        self.yp = np.zeros_like(self.y0)
+
+        self.times = [0, 100]
+
+    def dxdt(self, y, t):
+        x  = y[1]
+        y  = y[2]
+        dx = y[3]
+        dy = y[4]
+
+        self.yp[0] = dx
+        self.yp[1] = dy
+        self.yp[2] = -x - 2*x*y
+        self.yp[3] = y**2-y-x**2
 
         return self.yp
 
